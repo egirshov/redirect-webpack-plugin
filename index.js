@@ -11,9 +11,16 @@ module.exports = class RedirectWebpackPlugin {
       Object.keys(redirects).forEach(from => {
         const to = redirects[from];
 
-        compilation.assets[`${from}/index.html`] = new RawSource(
-          `<meta http-equiv="refresh" content="0; url=${to}"><link rel="canonical" href="${to}" />`
-        );
+        const html = `<!DOCTYPE html lang='en'>
+<html>
+  <head>
+    <meta charset="utf-8">
+    <noscript><meta http-equiv="refresh" content="0; url=${to}"><link rel="canonical" href="${to}" /></noscript>
+    <script>window.location = window.location.origin + '${to}' + window.location.search</script>
+  </head>
+</html>`
+
+        compilation.assets[`${from}/index.html`] = new RawSource(html)
       });
 
       cb();
